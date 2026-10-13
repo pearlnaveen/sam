@@ -1,0 +1,383 @@
+--------------------------------------TO-DO--------------------------------------
+import { useState } from "react";
+
+function App() {
+  const [task, setTask] = useState("");
+  const [tasks, setTasks] = useState([]);
+
+  // Add task
+  function addTask(e) {
+    e.preventDefault();
+
+    if (task.trim() === "") {
+      alert("Please enter a task");
+      return;
+    }
+
+    setTasks([
+      ...tasks,
+      { id: Date.now(), name: task, completed: false }
+    ]);
+
+    setTask("");
+  }
+
+  // Complete task
+  function completeTask(id) {
+    setTasks(
+      tasks.map((t) =>
+        t.id === id
+          ? { ...t, completed: !t.completed }
+          : t
+      )
+    );
+  }
+
+  // Delete task
+  function deleteTask(id) {
+    setTasks(tasks.filter((t) => t.id !== id));
+  }
+
+  return (
+    <div style={{ padding: "20px" }}>
+      <h1>To-Do Application</h1>
+
+      <form onSubmit={addTask}>
+        <input
+          type="text"
+          placeholder="Enter a task"
+          value={task}
+          onChange={(e) => setTask(e.target.value)}
+        />
+
+        <button type="submit">Add Task</button>
+      </form>
+
+      <h2>My Tasks</h2>
+
+      <ul>
+        {tasks.map((t) => (
+          <li key={t.id}>
+            <span
+              onClick={() => completeTask(t.id)}
+              style={{
+                textDecoration: t.completed
+                  ? "line-through"
+                  : "none",
+                cursor: "pointer"
+              }}
+            >
+              {t.name}
+            </span>
+
+            {" "}
+
+            <button onClick={() => deleteTask(t.id)}>
+              Delete
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default App;
+
+
+
+--------------------------------------TEMPLATE--------------------------------------
+
+import { useState, useEffect } from "react";
+
+function App() {
+  // State
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+
+  // Event handling and form validation
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    if (name.trim() === "" || email.trim() === "") {
+      setMessage("Please fill all fields");
+      return;
+    }
+
+    if (!email.includes("@") || !email.includes(".")) {
+      setMessage("Enter a valid email");
+      return;
+    }
+
+    setMessage("Form submitted successfully!");
+  }
+
+  // API integration example
+  useEffect(() => {
+    // Fetch API data here when required
+  }, []);
+
+  return (
+    <div>
+      <h1>React Application</h1>
+
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Enter your name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+
+        <br /><br />
+
+        <input
+          type="email"
+          placeholder="Enter your email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+
+        <br /><br />
+
+        <button type="submit">Submit</button>
+      </form>
+
+      <p>{message}</p>
+    </div>
+  );
+}
+
+export default App;
+
+
+--------------------------------------API--------------------------------------
+const [data, setData] = useState([]);
+
+useEffect(() => {
+  fetch("https://jsonplaceholder.typicode.com/users")
+    .then((response) => response.json())
+    .then((result) => setData(result))
+    .catch((error) => console.log(error));
+}, []);
+
+
+--------------------------------------TIMER--------------------------------------
+
+import { useState, useEffect } from "react";
+
+function App() {
+  const [seconds, setSeconds] = useState(0);
+  const [running, setRunning] = useState(false);
+
+  useEffect(() => {
+    let timer;
+
+    if (running) {
+      timer = setInterval(() => {
+        setSeconds((s) => s + 1);
+      }, 1000);
+    }
+
+    return () => clearInterval(timer);
+  }, [running]);
+
+  function resetTimer() {
+    setRunning(false);
+    setSeconds(0);
+  }
+
+  return (
+    <div style={{ textAlign: "center", padding: "30px" }}>
+      <h1>React Timer</h1>
+
+      <h2>{seconds} seconds</h2>
+
+      <button onClick={() => setRunning(true)}>
+        Start
+      </button>
+
+      <button onClick={() => setRunning(false)}>
+        Stop
+      </button>
+
+      <button onClick={resetTimer}>
+        Reset
+      </button>
+    </div>
+  );
+}
+
+export default App;
+
+
+
+--------------------------------------QUIZ--------------------------------------
+
+
+import { useState } from "react";
+
+function App() {
+  const questions = [
+    {
+      question: "What is React?",
+      options: ["Database", "Library", "Language", "Browser"],
+      answer: "Library"
+    },
+    {
+      question: "Which hook is used to store state?",
+      options: ["useEffect", "useState", "useRef", "useAPI"],
+      answer: "useState"
+    },
+    {
+      question: "Which language is used with React?",
+      options: ["Java", "Python", "JavaScript", "C"],
+      answer: "JavaScript"
+    },
+    {
+      question: "Which method displays a list in React?",
+      options: ["filter()", "map()", "find()", "push()"],
+      answer: "map()"
+    }
+  ];
+
+  const [index, setIndex] = useState(0);
+  const [score, setScore] = useState(0);
+  const [selected, setSelected] = useState("");
+  const [finished, setFinished] = useState(false);
+
+  function nextQuestion() {
+    if (selected === "") {
+      alert("Please select an answer");
+      return;
+    }
+
+    if (selected === questions[index].answer) {
+      setScore(score + 1);
+    }
+
+    setSelected("");
+
+    if (index === questions.length - 1) {
+      setFinished(true);
+    } else {
+      setIndex(index + 1);
+    }
+  }
+
+  function restartQuiz() {
+    setIndex(0);
+    setScore(0);
+    setSelected("");
+    setFinished(false);
+  }
+
+  return (
+    <div style={{ padding: "20px", textAlign: "center" }}>
+      <h1>React Quiz Application</h1>
+
+      {finished ? (
+        <>
+          <h2>Quiz Completed!</h2>
+          <h3>
+            Score: {score} / {questions.length}
+          </h3>
+          <button onClick={restartQuiz}>Restart Quiz</button>
+        </>
+      ) : (
+        <>
+          <h3>
+            Question {index + 1}: {questions[index].question}
+          </h3>
+
+          {questions[index].options.map((option) => (
+            <div key={option}>
+              <label>
+                <input
+                  type="radio"
+                  name="answer"
+                  value={option}
+                  checked={selected === option}
+                  onChange={() => setSelected(option)}
+                />
+                {option}
+              </label>
+            </div>
+          ))}
+
+          <br />
+
+          <button onClick={nextQuestion}>
+            {index === questions.length - 1
+              ? "Submit Quiz"
+              : "Next Question"}
+          </button>
+        </>
+      )}
+    </div>
+  );
+}
+
+export default App;
+
+
+--------------------------------------Calculator--------------------------------------
+import { useState } from "react";
+
+function App() {
+  const [a, setA] = useState("");
+  const [b, setB] = useState("");
+  const [result, setResult] = useState("");
+
+  function calculate(op) {
+    let x = Number(a);
+    let y = Number(b);
+
+    if (a === "" || b === "") {
+      setResult("Enter both numbers");
+      return;
+    }
+
+    if (op === "+") setResult(x + y);
+    else if (op === "-") setResult(x - y);
+    else if (op === "*") setResult(x * y);
+    else if (op === "/") {
+      if (y === 0) setResult("Cannot divide by zero");
+      else setResult(x / y);
+    }
+  }
+
+  return (
+    <div style={{ textAlign: "center", padding: "30px" }}>
+      <h1>React Calculator</h1>
+
+      <input
+        type="number"
+        placeholder="First number"
+        value={a}
+        onChange={(e) => setA(e.target.value)}
+      />
+
+      <br /><br />
+
+      <input
+        type="number"
+        placeholder="Second number"
+        value={b}
+        onChange={(e) => setB(e.target.value)}
+      />
+
+      <br /><br />
+
+      <button onClick={() => calculate("+")}>+</button>{" "}
+      <button onClick={() => calculate("-")}>-</button>{" "}
+      <button onClick={() => calculate("*")}>×</button>{" "}
+      <button onClick={() => calculate("/")}>÷</button>
+
+      <h2>Result: {result}</h2>
+    </div>
+  );
+}
+
+export default App;
