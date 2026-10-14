@@ -381,3 +381,55 @@ function App() {
 }
 
 export default App;
+
+
+
+
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/YOUR_USERNAME/currency-converter.git'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                bat 'npm install'
+            }
+        }
+
+        stage('Build React App') {
+            steps {
+                bat 'npm run build'
+            }
+        }
+
+    }
+
+    post {
+        success {
+            echo 'React application built successfully!'
+        }
+
+        failure {
+            echo 'React application build failed!'
+        }
+    }
+}
+
+
+FROM node:20
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+EXPOSE 5173
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+
+npm install -g serve
+serve -s . -l 8081
